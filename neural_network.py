@@ -1,17 +1,20 @@
 import numpy as np
 
+# receives two 10-size vectors, a, b, and returns the L2 loss value
+def loss_function(a, b):
+	return 1.0/2.0 * np.square(np.subtract(a, b))
+
+
+def loss_gradient(a, b):
+	return np.subtract(a, b)
+
+
+def sigmoid(a):
+	return 1.0 / (1.0 + np.exp(-a))
+
+
 class NeuralNetwork:
-	# receives two 10-size vectors, a, b, and returns 1/2*(a-b).^2
-	def lossFunction(self, a, b):
-		return 1.0/2.0 * np.square(np.subtract(a, b))
-
-	def lossGradient(self, a, b):
-		return np.subtract(a, b)
-
-	def sigmoid(self, a):
-		return 1.0 / (1.0 + np.exp(-a))
-
-	# sets up layers and creates random matrices for feedforward
+	# sets up layers and creates random matrices for FeedForward
 	def __init__(self, layerSize):
 		self.layers = len(layerSize)
 		self.layerSize = layerSize
@@ -20,70 +23,69 @@ class NeuralNetwork:
 		self.theta = [np.zeros(1) for i in range(self.layers - 1)]
 
 		for i in range(self.layers - 1):
-			self.bias[i] = np.random.uniform(-0.000001, 0.000001, (layerSize[i + 1]))
-			self.theta[i] = np.random.uniform(-0.000001, 0.000001, (layerSize[i + 1], layerSize[i]))
+			self.bias[i] = np.random.uniform(-1., 1., (layerSize[i + 1]))
+			self.theta[i] = np.random.uniform(-1., 1., (layerSize[i + 1], layerSize[i]))
 
-	# returns a 10-size vector
+	# returns the prediction for each digit
 	def feedForward(self, curr_layer):
 		for i in range(self.layers - 1):
-			curr_layer = self.sigmoid(np.add(np.matmul(self.theta[i], curr_layer), self.bias[i]))
+			curr_layer = sigmoid(np.add(np.matmul(self.theta[i], curr_layer), self.bias[i]))
 
 		return curr_layer
 
 	# trains a neural network using gradient descent
-	def train(self, image_list, epochs, imagesPerEpoch, alpha):
-		currEpoch = 1
+	def train(self, image_list, epochs, images_per_epoch, alpha):
+		curr_epoch = 1
 
 		# make the images normalized
-		getImages = image_list.returnImageAll() / 255.0
-		getLabels = image_list.returnLabelAll()
+		get_images = image_list.returnImageAll() / 255.0
+		get_labels = image_list.returnLabelAll()
 
-		while currEpoch <= epochs:
-			v = np.random.randint(0, getImages.shape[0] - 1, imagesPerEpoch)
-			b = np.array([getImages[i].flatten() for i in v])
-			l = np.array([getLabels[i] 			 for i in v])
+		while curr_epoch <= epochs:
+			v = np.random.randint(0, get_images.shape[0] - 1, images_per_epoch)
+			b = np.array([get_images[i].flatten() for i in v])
+			l = np.array([get_labels[i] for i in v])
 
-			biasEdits = [np.zeros(self.bias[i].shape) for i in range(self.layers - 1)]
-			thetaEdits = [np.zeros(self.theta[i].shape) for i in range(self.layers - 1)]
+			bias_edits = [np.zeros(self.bias[i].shape) for i in range(self.layers - 1)]
+			theta_edits = [np.zeros(self.theta[i].shape) for i in range(self.layers - 1)]
 
 			for i in range(self.layers - 1):
-				biasEdits[i] = np.zeros(self.bias[i].shape)
-				thetaEdits[i] = np.zeros(self.theta[i].shape)
+				bias_edits[i] = np.zeros(self.bias[i].shape)
+				theta_edits[i] = np.zeros(self.theta[i].shape)
 
-			fitness = np.zeros(10)
+			accuracy = 0.0
 
-			for i in range(imagesPerEpoch):
+			for i in range(images_per_epoch):
 				response = [np.zeros(1) for j in range(self.layers)]
 				response[0] = b[i]
-				expectedLabels = np.zeros(self.layerSize[-1])
-				expectedLabels[l[i]] = 1.0
+				expected_labels = np.zeros(self.layerSize[-1])
+				expected_labels[l[i]] = 1.0
 
 				for j in range(self.layers - 1):
-					response[j + 1] = self.sigmoid(np.add(np.matmul(self.theta[j], response[j]), self.bias[j]))
+					response[j + 1] = sigmoid(np.add(np.matmul(self.theta[j], response[j]), self.bias[j]))
 
-				# print response[-1], expectedLabels
-				fitness += self.lossFunction(response[-1], expectedLabels) / imagesPerEpoch
+				accuracy += np.argmax(response[-1]) == np.argmax(expected_labels)
 
-				backResponse = self.lossGradient(response[-1], expectedLabels)
+				back_response = loss_gradient(response[-1], expected_labels)
 
 				for j in range(self.layers - 2, -1, -1):
-					thetaEdits[j] = np.add(thetaEdits[j], np.outer(backResponse, response[j]))
-					biasEdits[j] = np.add(biasEdits[j], backResponse)
-					backResponse = np.matmul(self.theta[j].T, backResponse) * response[j] * (1. - response[j])
+					theta_edits[j] = np.add(theta_edits[j], np.outer(back_response, response[j]))
+					bias_edits[j] = np.add(bias_edits[j], back_response)
+					back_response = np.matmul(self.theta[j].T, back_response) * response[j] * (1. - response[j])
 
 			for i in range(self.layers - 1):
-				self.bias[i] -= biasEdits[i] / (alpha * imagesPerEpoch)
-				self.theta[i] -= thetaEdits[i] / (alpha * imagesPerEpoch)
+				self.bias[i] -= bias_edits[i] * alpha / float(images_per_epoch)
+				self.theta[i] -= theta_edits[i] * alpha / float(images_per_epoch)
 
-			print "Finished with epoch #", currEpoch, " with fitness: ", ['%.5f' % v for v in fitness], " eq. ", np.dot(v, v)
-			currEpoch += 1
+			print "Finished with epoch #", curr_epoch, " with accuracy: ", float(accuracy) / images_per_epoch
+			curr_epoch += 1
 
 	# returns the model's prediction for the given image
 	def predictLabel(self, img):
 		flatten_image = img.flatten() / 255.0
 
-		predictedLabels = self.feedForward(flatten_image)
+		label_predictions = self.feedForward(flatten_image)
 
-		return np.argmax(predictedLabels)
+		return np.argmax(label_predictions)
 
 

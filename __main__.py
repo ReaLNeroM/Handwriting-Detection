@@ -10,9 +10,9 @@ imagesNum = image_list.getTrainingSize()
 imageSize = image_list.getImageSize()
 labels = 10
 
-trainingEpochs = 500
-imagesPerEpoch = 600
-alpha = 0.0000001
+trainingEpochs = 300
+imagesPerEpoch = 2000
+alpha = 5.
 
 input_neurons = imageSize[0] * imageSize[1]
 
