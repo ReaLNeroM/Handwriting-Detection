@@ -22,9 +22,9 @@ try:
 except IOError:
 	print "No neural network found. Training new network..."
 
-	epochs = 3
+	epochs = 3000
 	images_per_epoch = 2000
-	alpha = 2.
+	alpha = 1.
 
 	input_neurons = image_dimensions[0] * image_dimensions[1]
 
