@@ -14,7 +14,7 @@ def sigmoid(a):
 
 
 class NeuralNetwork:
-	# sets up layers and creates random matrices for FeedForward
+	# sets up layers and creates random matrices for feed_forward
 	def __init__(self, layerSize):
 		self.layers = len(layerSize)
 		self.layerSize = layerSize
@@ -27,7 +27,7 @@ class NeuralNetwork:
 			self.theta[i] = np.random.uniform(-1., 1., (layerSize[i + 1], layerSize[i]))
 
 	# returns the prediction for each digit
-	def feedForward(self, curr_layer):
+	def feed_forward(self, curr_layer):
 		for i in range(self.layers - 1):
 			curr_layer = sigmoid(np.add(np.matmul(self.theta[i], curr_layer), self.bias[i]))
 
@@ -38,8 +38,8 @@ class NeuralNetwork:
 		curr_epoch = 1
 
 		# make the images normalized
-		get_images = image_list.returnImageAll() / 255.0
-		get_labels = image_list.returnLabelAll()
+		get_images = image_list.return_image_all() / 255.0
+		get_labels = image_list.returnLabel_all()
 
 		while curr_epoch <= epochs:
 			v = np.random.randint(0, get_images.shape[0] - 1, images_per_epoch)
@@ -77,14 +77,14 @@ class NeuralNetwork:
 				self.bias[i] -= bias_edits[i] * alpha / float(images_per_epoch)
 				self.theta[i] -= theta_edits[i] * alpha / float(images_per_epoch)
 
-			print "Finished with epoch #", curr_epoch, " with accuracy: ", float(accuracy) / images_per_epoch
+			print "Finished with epoch #", curr_epoch, " with accuracy: ", float(accuracy*100.0) / images_per_epoch, '%'
 			curr_epoch += 1
 
 	# returns the model's prediction for the given image
-	def predictLabel(self, img):
+	def predict_label(self, img):
 		flatten_image = img.flatten() / 255.0
 
-		label_predictions = self.feedForward(flatten_image)
+		label_predictions = self.feed_forward(flatten_image)
 
 		return np.argmax(label_predictions)
 

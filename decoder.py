@@ -31,10 +31,10 @@ class ImagePack:
 
 		self.label = [ord(k) for k in f.read(images)]
 
-	def getTrainingSize(self):
+	def get_training_size(self):
 		return len(self.image)
 		
-	def getImageSize(self):
+	def get_image_size(self):
 		return self.rows, self.columns
 
 	def display(self, img):
@@ -50,15 +50,15 @@ class ImagePack:
 		if raw_input(''):
 			sys.exit(0)
 
-	def returnImage(self, img):
+	def return_image(self, img):
 		return self.image[img]
 
-	def returnLabel(self, lab):
+	def return_label(self, lab):
 		return self.label[lab]
 
-	def returnImageAll(self):
+	def return_image_all(self):
 		return self.image
 
-	def returnLabelAll(self):
+	def returnLabel_all(self):
 		return self.label
 
