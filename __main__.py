@@ -10,20 +10,21 @@ imagesNum = image_list.getTrainingSize()
 imageSize = image_list.getImageSize()
 labels = 10
 
-trainingEpochs = 3
-imagesPerEpoch = 1000
+trainingEpochs = 500
+imagesPerEpoch = 600
+alpha = 0.0000001
 
 input_neurons = imageSize[0] * imageSize[1]
 
-# the second layer has sqrt(|first|*|output|) neurons. I read somewhere this is a good rule of thumb. 
+# the second layer has sqrt(|input|*|output|) neurons. This is a good rule of thumb. 
 neural_net = neural_network.NeuralNetwork((input_neurons, int((input_neurons * labels) ** 0.5), labels))
-neural_net.train(image_list, trainingEpochs, imagesPerEpoch)
+neural_net.train(image_list, trainingEpochs, imagesPerEpoch, alpha)
 
-for i in range(5):
+for i in range(20):
 	currImage = randint(0, imagesNum - 1)
-	print "I predicted this image is: ", neural_net.predictLabel(image_list.returnImage(currImage))
+	print "I predicted this image is: ", neural_net.predictLabel(image_list.returnImage(currImage)), " expected ans: ", image_list.returnLabel(currImage)
 	image_list.display(currImage)
 	print
 
-raw_input("Are you satisfied with the results?")
+raw_input("Are you satisfied with the results?\n")
 # I don't process your input. Guess why ...

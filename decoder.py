@@ -13,31 +13,32 @@ class ImagePack:
 		self.rows = (struct.unpack('>i', f.read(4)))[0]
 		self.columns = (struct.unpack('>i', f.read(4)))[0]
 
-		images = 1000
-
 		self.image = np.zeros((images, self.rows, self.columns))
+
+		print "Loading images..."
 
 		for i in range(images):
 			for j in range(self.rows):
 				self.image[i][j] = [ord(k) for k in f.read(self.columns)]
+
+		print "Loading finished!"
+
 	def decode_labels(self, name):
 		f = open(name)
 
 		magic = (struct.unpack('>i', f.read(4)))[0]
 		images = (struct.unpack('>i', f.read(4)))[0]
 
-		images = 1000
-
-		self.label = [ord(k) for k in f.read(1)]
+		self.label = [ord(k) for k in f.read(images)]
 
 	def getTrainingSize(self):
 		return len(self.image)
 		
 	def getImageSize(self):
-		return (self.rows, self.columns)
+		return self.rows, self.columns
 
-	def display(self, imgi):
-		im = self.image[imgi]
+	def display(self, img):
+		im = self.image[img]
 
 		matplotlib.interactive(True)
 
@@ -49,9 +50,15 @@ class ImagePack:
 		if raw_input(''):
 			sys.exit(0)
 
-	def returnImage(self, imgi):
-		im = self.image[imgi]
-		
-		return im
+	def returnImage(self, img):
+		return self.image[img]
 
+	def returnLabel(self, lab):
+		return self.label[lab]
+
+	def returnImageAll(self):
+		return self.image
+
+	def returnLabelAll(self):
+		return self.label
 
