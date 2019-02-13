@@ -35,10 +35,19 @@ except IOError:
 ff = open(dir_path + '/nn', 'wb+')
 pickle.dump(neural_net, ff)
 
+correct = 0
+
+for i in range(testset_size):
+	correct += neural_net.predict_label(image_list.return_image(i)) == image_list.return_label(i)
+
+print 'Final Accuracy:', str(float(correct * 100.0) / testset_size) + '%'
+
 for i in range(20):
 	curr_image = randint(0, testset_size - 1)
-	print "I predicted this image is: ", neural_net.predict_label(image_list.return_image(curr_image)), \
-				" expected ans: ", image_list.return_label(curr_image)
+	prediction = neural_net.predict_label(image_list.return_image(curr_image))
+	expected = image_list.return_label(curr_image)
+	print "I predicted this image is:", prediction, \
+				", Expected ans:", expected, "correct? " + str(prediction == expected)
 	image_list.display(curr_image)
 	print
 
