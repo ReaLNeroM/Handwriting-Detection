@@ -19,7 +19,7 @@ class ImagePack:
 
 		for i in range(images):
 			for j in range(self.rows):
-				self.image[i][j] = [k for k in f.read(self.columns)]
+				self.image[i][j] = list(f.read(self.columns))
 
 		print ("Loading finished!")
 
@@ -29,7 +29,7 @@ class ImagePack:
 		magic = int.from_bytes(f.read(4), byteorder='big', signed=False)
 		images = int.from_bytes(f.read(4), byteorder='big', signed=False)
 
-		self.label = [k for k in f.read(images)]
+		self.label = list(f.read(images))
 
 	def get_training_size(self):
 		return len(self.image)
@@ -47,7 +47,7 @@ class ImagePack:
 		plt.imshow(im)
 		plt.show()
 
-		if raw_input(''):
+		if input(''):
 			sys.exit(0)
 
 	def return_image(self, img):

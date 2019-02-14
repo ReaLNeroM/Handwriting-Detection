@@ -22,9 +22,9 @@ try:
 except IOError:
 	print ("No neural network found. Training new network...")
 
-	epochs = 30
+	epochs = 300
 	images_per_epoch = 2000
-	alpha = 1.
+	alpha = 5.
 
 	input_neurons = image_dimensions[0] * image_dimensions[1]
 
@@ -51,5 +51,5 @@ for i in range(20):
 	image_list.display(curr_image)
 	print ()
 
-raw_input("Are you satisfied with the results?\n")
+input("Are you satisfied with the results?\n")
 # I don't process your input. Guess why ...
