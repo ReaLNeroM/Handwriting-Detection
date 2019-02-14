@@ -6,30 +6,30 @@ import matplotlib.pyplot as plt
 
 class ImagePack:
 	def decode(self, name):
-		f = open(name)
+		f = open(name, 'rb')
 
-		magic = (struct.unpack('>i', f.read(4)))[0]
-		images = (struct.unpack('>i', f.read(4)))[0]
-		self.rows = (struct.unpack('>i', f.read(4)))[0]
-		self.columns = (struct.unpack('>i', f.read(4)))[0]
+		magic = int.from_bytes(f.read(4), byteorder='big', signed=False)
+		images = int.from_bytes(f.read(4), byteorder='big', signed=False)
+		self.rows = int.from_bytes(f.read(4), byteorder='big', signed=False)
+		self.columns = int.from_bytes(f.read(4), byteorder='big', signed=False)
 
 		self.image = np.zeros((images, self.rows, self.columns))
 
-		print "Loading images..."
+		print ("Loading images...")
 
 		for i in range(images):
 			for j in range(self.rows):
-				self.image[i][j] = [ord(k) for k in f.read(self.columns)]
+				self.image[i][j] = [k for k in f.read(self.columns)]
 
-		print "Loading finished!"
+		print ("Loading finished!")
 
 	def decode_labels(self, name):
-		f = open(name)
+		f = open(name, 'rb')
 
-		magic = (struct.unpack('>i', f.read(4)))[0]
-		images = (struct.unpack('>i', f.read(4)))[0]
+		magic = int.from_bytes(f.read(4), byteorder='big', signed=False)
+		images = int.from_bytes(f.read(4), byteorder='big', signed=False)
 
-		self.label = [ord(k) for k in f.read(images)]
+		self.label = [k for k in f.read(images)]
 
 	def get_training_size(self):
 		return len(self.image)

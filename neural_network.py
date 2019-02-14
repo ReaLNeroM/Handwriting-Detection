@@ -77,7 +77,7 @@ class NeuralNetwork:
 				self.bias[i] -= bias_edits[i] * alpha / float(images_per_epoch)
 				self.theta[i] -= theta_edits[i] * alpha / float(images_per_epoch)
 
-			print "Finished with epoch #", curr_epoch, " with accuracy: ", float(accuracy*100.0) / images_per_epoch, '%'
+			print ("Finished with epoch #", curr_epoch, " with accuracy: ", float(accuracy*100.0) / images_per_epoch, '%')
 			curr_epoch += 1
 
 	# returns the model's prediction for the given image

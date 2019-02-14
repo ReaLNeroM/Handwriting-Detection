@@ -17,12 +17,12 @@ labels = 10
 try:
 	ff = open(dir_path + '/nn', 'rb')
 
-	print "Loading previous neural network..."
+	print ("Loading previous neural network...")
 	neural_net = pickle.load(ff)
 except IOError:
-	print "No neural network found. Training new network..."
+	print ("No neural network found. Training new network...")
 
-	epochs = 3000
+	epochs = 30
 	images_per_epoch = 2000
 	alpha = 1.
 
@@ -40,16 +40,16 @@ correct = 0
 for i in range(testset_size):
 	correct += neural_net.predict_label(image_list.return_image(i)) == image_list.return_label(i)
 
-print 'Final Accuracy:', str(float(correct * 100.0) / testset_size) + '%'
+print ('Final Accuracy:', str(float(correct * 100.0) / testset_size) + '%')
 
 for i in range(20):
 	curr_image = randint(0, testset_size - 1)
 	prediction = neural_net.predict_label(image_list.return_image(curr_image))
 	expected = image_list.return_label(curr_image)
-	print "I predicted this image is:", prediction, \
-				", Expected ans:", expected, "correct? " + str(prediction == expected)
+	print ("I predicted this image is:", prediction, \
+				", Expected ans:", expected, "correct? " + str(prediction == expected))
 	image_list.display(curr_image)
-	print
+	print ()
 
 raw_input("Are you satisfied with the results?\n")
 # I don't process your input. Guess why ...
