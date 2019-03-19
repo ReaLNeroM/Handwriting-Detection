@@ -1,64 +1,66 @@
 import sys
-import struct
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 
 class ImagePack:
-	def decode(self, name):
-		f = open(name, 'rb')
+    def __init__(self, image_data_location, label_data_location):
+        self.decode_images(image_data_location)
+        self.decode_labels(label_data_location)
 
-		magic = int.from_bytes(f.read(4), byteorder='big', signed=False)
-		images = int.from_bytes(f.read(4), byteorder='big', signed=False)
-		self.rows = int.from_bytes(f.read(4), byteorder='big', signed=False)
-		self.columns = int.from_bytes(f.read(4), byteorder='big', signed=False)
+    def decode_images(self, name):
+        file_object = open(name, 'rb')
 
-		self.image = np.zeros((images, self.rows, self.columns))
+        magic = int.from_bytes(file_object.read(4), byteorder='big', signed=False) # pylint: disable=unused-variable
+        images = int.from_bytes(file_object.read(4), byteorder='big', signed=False)
+        self.rows = int.from_bytes(file_object.read(4), byteorder='big', signed=False)
+        self.columns = int.from_bytes(file_object.read(4), byteorder='big', signed=False)
 
-		print ("Loading images...")
+        self.image = np.zeros((images, self.rows, self.columns))
 
-		for i in range(images):
-			for j in range(self.rows):
-				self.image[i][j] = list(f.read(self.columns))
+        print("Loading images...")
 
-		print ("Loading finished!")
+        for i in range(images):
+            for j in range(self.rows):
+                self.image[i][j] = list(file_object.read(self.columns))
 
-	def decode_labels(self, name):
-		f = open(name, 'rb')
+        print("Loading finished!")
 
-		magic = int.from_bytes(f.read(4), byteorder='big', signed=False)
-		images = int.from_bytes(f.read(4), byteorder='big', signed=False)
+    def decode_labels(self, name):
+        file_object = open(name, 'rb')
 
-		self.label = list(f.read(images))
+        magic = int.from_bytes(file_object.read(4), byteorder='big', signed=False) # pylint: disable=unused-variable
+        images = int.from_bytes(file_object.read(4), byteorder='big', signed=False)
 
-	def get_training_size(self):
-		return len(self.image)
-		
-	def get_image_size(self):
-		return self.rows, self.columns
+        self.label = list(file_object.read(images))
 
-	def display(self, img):
-		im = self.image[img]
+    def get_training_size(self):
+        return len(self.image)
 
-		matplotlib.interactive(True)
+    def get_image_size(self):
+        return self.rows, self.columns
 
-		plt.ion()
-		plt.gray()
-		plt.imshow(im)
-		plt.show()
+    def display(self, img_index):
+        image_object = self.image[img_index]
 
-		if input(''):
-			sys.exit(0)
+        matplotlib.interactive(True)
 
-	def return_image(self, img):
-		return self.image[img]
+        plt.ion()
+        plt.gray()
+        plt.imshow(image_object)
+        plt.show()
 
-	def return_label(self, lab):
-		return self.label[lab]
+        if input(''):
+            sys.exit(0)
 
-	def return_image_all(self):
-		return self.image
+    def return_image(self, img_index):
+        return self.image[img_index]
 
-	def returnLabel_all(self):
-		return self.label
+    def return_label(self, label_index):
+        return self.label[label_index]
 
+    def return_image_all(self):
+        return self.image
+
+    def return_label_all(self):
+        return self.label
